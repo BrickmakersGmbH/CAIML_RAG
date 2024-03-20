@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/night.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+
+
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Advanced Improvement Strategies for Your RAG Pipeline
+<div class="stretch-column" style="font-size: 22px; position: absolute; left: 0%; top: 60%; height: 10%; width: 100%; display: flex; flex-direction: column; align-items: start; justify-content: space-evenly" align="stretch">
+
+Emil Bohleber, Software Developer at BRICKMAKERS 
+</div>
+
+ 
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+<img src="work/CAIML/images/Pasted image 20240319161805.png" alt="" style="width: 2000px; object-fit: fill">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+<img src="work/CAIML/images/Pasted image 20240319161843.png" alt="" style="width: 2000px; object-fit: fill">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Why Retrieval Augmented Generation?
+- "We have prompting."
+	- Relatively low cost, but
+	- High token count/context window too small
+	- Lost in the middle problems
+
+- "We could Fine Tune the LLM."
+	- Very high Cost
+	- Big time and money investment
+	- "drop in the ocean"-problem
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### What is RAG?
+
+Freeze LLM, carefully select context to prompt
+
+- Keeps token count small
+- Relatively cheap
+- Embedding models can be small
+- Basic version fast to implement
+
+<img src="work/CAIML/images/basic_RAG.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svg|100px; height: 300px; object-fit: fill; align-self: center">
+
+
+</br>
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+## Implementation
+<small>Simple setup for RAG-Pipeline.</small>
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Problems with naive RAG
+
+- **Low Precision**: Not all chunks are relevant
+	- Hallucinations, lost in the middle problems, to much noise
+- **Low Recall**: No chunks are relevant
+	- LLM hat not enough context for answer, irrelevant answer
+- **Speed**: It takes a long time to retrieve data
+	- No inverted index
+
+<img src="work/CAIML/images/basic_RAG.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svg|100px; height: 300px; object-fit: fill; align-self: center">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Complexity of solutions
+
+We must not forget about complexity vs. value.
+
+<img src="work/CAIML/images/complexity_of_RAG.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svg|200px; height: 400px; object-fit: fill; align-self: center">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Self Querying Retrieval
+
+- Embeddings are good at meaning extraction 
+- Bad at hard search criteria { year: 1985, ... }
+
+**Idea**: Add metadata filters to chunks/documents.
+
+<img src="work/CAIML/images/metadata.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: space-evenly; width: .svgpx; object-fit: fill; align-self: end">
+
+
+<div class="" style="position: absolute; left: 0%; top: 50%; height: 40%; width: 50%; display: flex; flex-direction: column; align-items: start; justify-content: flex-start" align="left">
+
+**Benefits**:
+- Classic optimized search
+- Metadata can aid in synthesis
+- Supported by most Vector DBs
+</div>
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Self Querying Retrieval
+
+Use LLM to extract meaning and metadata from question.
+
+<img src="work/CAIML/images/sqr.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svgpx; object-fit: fill; align-self: center">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+## Implementation
+<small>Classic book search</small>
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Small to big retrieval
+
+- Embeddings loose "resolution" with chunk size
+- Bigger chunks <i class="fas fa-arrow-right"></i> Broader context and loose ideas
+- Smaller chunks <i class="fas fa-arrow-right"></i> Details, but no context
+ 
+<img src="work/CAIML/images/chunks.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svgpx; object-fit: fill; align-self: center">
+
+
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Small to big retrieval
+
+**Idea**: Use small chunks for retrieval, big chunks for synthesis
+
+<img src="work/CAIML/images/small_to_big.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svg|100px; height: 380px; object-fit: fill; align-self: center">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+## Implementation
+<small>Query a knowledge base</small>
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Hypothetical Document Embedding
+
+Saved Embedding vs. Question Embedding
+- Mismatch between saved data and question format too big
+- Questions not precise enough
+
+<img src="work/CAIML/images/Pasted image 20240319132819.png" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: 900px; object-fit: fill; align-self: center">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### So HyDE everywhere?
+
+- LLM must have some knowledge topic
+- Every question calls LLM
+- event when it would not need to
+
+**Alternative**: Inverse HyDE (Question Embedding?)
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Inverse HyDE
+
+- Instead of getting hypothetical answer from LLM, we generate hypothetical questions during ingestion 
+
+<img src="work/CAIML/images/inverse_hyde.excalidraw.svg" alt="" style="display: flex; flex-direction: column; align-items: start; justify-content: center; width: .svgpx; object-fit: fill; align-self: center">
+
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+## Implementation
+<small>Emotional support taylor swift</small>
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section></section><section  data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+## Conclusion 
+
+- We saw some "low effort" solutions to inject your data into an LLM
+- Chose the right tool for the job
+	- e.g. self querying retrieval for shops
+- Important aspect not mentioned: Evaluation
+	- Pinpoint your problems and evaluate your solutions
+- Start small
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="has-dark-background drop" data-background-color="#001834" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 720px; width: 1280px; min-height: 720px; display: flex; flex-direction: column; align-items: start; justify-content: center" absolute="true">
+
+### Thank you
+Code and slides at https://github.com/brickmakersgmbh/CAIML_RAG<small>*soon</small> 
+
+
+<div class="" style="position: absolute; left: 0%; top: 90%; height: 10%; width: 20%; display: flex; flex-direction: column; align-items: start; justify-content: center" >
+
+<img src="work/CAIML/images/BM Logo 2018 RGB white.png" alt="" style="object-fit: scale-down">
+
+</div>
+</div></script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+			]
+		},
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":1280,"height":720,"margin":0.04,"controls":true,"progress":true,"slideNumber":true,"center":false,"transition":"slide","transitionSpeed":"slow"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
