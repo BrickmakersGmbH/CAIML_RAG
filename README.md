@@ -9,3 +9,14 @@ In recent times, as Large Language Models (LLMs) have gained popularity in the t
 Slides are located in the /docs folder. You can view them [here](https://brickmakersgmbh.github.io/CAIML_RAG).
 
 ## Code
+
+The code is located in the /code folder. We're using Jupiter notebooks to run the code. You can run the code by installing the requirements and running the notebooks.
+
+## Sources
+
+- [RAG: Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401)
+- [Precise Zero-Shot Dense Retrieval without Relevance Labels](<https://arxiv.org/pdf/2212.10496.pdf>)
+- [LangChain Documentation](https://python.langchain.com/docs/get_started)
+- [A Practical Approach to Retrieval Augmented Generation Systems](https://mallahyari.github.io/rag-ebook/04_advanced_rag.html)
+- [How to improve RAG peformance — Advanced RAG Patterns](https://cloudatlas.me/how-to-improve-rag-peformance-advanced-rag-patterns-part2-0c84e2df66e6)
+- [Text Embeddings: Comprehensive Guide](https://towardsdatascience.com/text-embeddings-comprehensive-guide-afd97fce8fb5)
